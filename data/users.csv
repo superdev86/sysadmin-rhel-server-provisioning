@@ -1,0 +1,6 @@
+username,fullname,group,password_expiry_days
+ehaaland,Erling Haaland,admin,90
+kbryant,Kobe Bryant,admin,90
+kmbappe,Kylian Mbappe,webteam,90
+tbrady,Tom Brady,webteam,90
+djeter,Derek Jeter,readonly,90
