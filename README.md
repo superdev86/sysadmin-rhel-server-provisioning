@@ -1,4 +1,4 @@
-# RHEL Server Provisioning & Hardening
+# RHEL Server Provisioning & Hardening (In Progress)
 
 A secure, repeatable provisioning baseline for a RHEL server, built across two VirtualBox VMs — a management/control machine and a managed web server — using role-based access control, least-privilege permissions, and automated user onboarding.
 
