@@ -43,26 +43,26 @@ Two VirtualBox VMs — a client (control/dev machine) and a web server — conne
 *Confirming connectivity between the two VMs over the private network.*  
 ![Ping between client and web server](docs/screenshots/01-ping-client-to-web.png)
 
-*First SSH connection from the client VM into the web server, password-authenticated at this stage.*
+*First SSH connection from the client VM into the web server, password-authenticated at this stage.*  
 ![SSH from client to web server](docs/screenshots/02-ssh-client-to-web.png)
 
 ### 2. Automated User Provisioning
 
 A CSV source of truth drives a shell script that bulk-creates users, assigns role-based groups, sets password expiry policy, and generates temporary credentials that force a password change on first login.
 
-*The source-of-truth CSV: username, full name, role group, and password expiry policy per user.*
+*The source-of-truth CSV: username, full name, role group, and password expiry policy per user.*  
 ![users.csv source file](docs/screenshots/03-users-csv.png)
 
-*The three role-based groups (`admin`, `webteam`, `auditor`) created ahead of provisioning.*
+*The three role-based groups (`admin`, `webteam`, `auditor`) created ahead of provisioning.*  
 ![Groups created](docs/screenshots/04-groups-created.png)
 
-*Running the provisioning script and confirming the result — all users created in a single pass with correct group membership.*
+*Running the provisioning script and confirming the result — all users created in a single pass with correct group membership.*  
 ![create_users.sh execution and verification](docs/screenshots/05-create-users-script-run-and-verified.png)
 
-*Password aging policy confirmed per user — expiry set from the CSV, immediate change required at first login.*
+*Password aging policy confirmed per user — expiry set from the CSV, immediate change required at first login.*  
 ![Password expiry policy applied](docs/screenshots/06-password-policy-chage.png)
 
-*A newly provisioned user is required to set their own password before gaining shell access — temporary credentials are never left standing.*
+*A newly provisioned user is required to set their own password before gaining shell access — temporary credentials are never left standing.*  
 ![Forced password change on first login](docs/screenshots/07-forced-password-change.png)
 
 ### 3. Role-Based Access Control & Least-Privilege Permissions
@@ -77,7 +77,7 @@ Rather than a single blanket `wheel` grant, access is modeled around three disti
 
 Project directories are owned individually (for accountability) but group-owned by `admin` for role-based shared access, with permissions reasoned per directory based on actual runtime and maintenance needs rather than applied uniformly.
 
-*Script ownership: individual owner retained, group ownership set to `admin`.*
+*Script ownership: individual owner retained, group ownership set to `admin`.*  
 ![Group ownership: create_users.sh](docs/screenshots/08-chgrp-create-users-script.png)
 
 *Same pattern applied to the source-of-truth data file.*  
