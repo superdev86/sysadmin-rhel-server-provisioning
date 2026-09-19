@@ -40,7 +40,7 @@ The sections below walk through the project in the order it was actually built, 
 
 Two VirtualBox VMs — a client (control/dev machine) and a web server — connected over a private Host-Only network, separate from the NAT adapter used only for outbound package management traffic.
 
-*Confirming connectivity between the two VMs over the private network.*
+*Confirming connectivity between the two VMs over the private network.*  
 ![Ping between client and web server](docs/screenshots/01-ping-client-to-web.png)
 
 *First SSH connection from the client VM into the web server, password-authenticated at this stage.*
@@ -63,7 +63,6 @@ A CSV source of truth drives a shell script that bulk-creates users, assigns rol
 ![Password expiry policy applied](docs/screenshots/06-password-policy-chage.png)
 
 *A newly provisioned user is required to set their own password before gaining shell access — temporary credentials are never left standing.*
-
 ![Forced password change on first login](docs/screenshots/07-forced-password-change.png)
 
 ### 3. Role-Based Access Control & Least-Privilege Permissions
@@ -81,20 +80,18 @@ Project directories are owned individually (for accountability) but group-owned 
 *Script ownership: individual owner retained, group ownership set to `admin`.*
 ![Group ownership: create_users.sh](docs/screenshots/08-chgrp-create-users-script.png)
 
-*Same pattern applied to the source-of-truth data file.*
+*Same pattern applied to the source-of-truth data file.*  
 ![Group ownership: users.csv](docs/screenshots/09-chgrp-users-csv.png)
 
-*Group ownership set consistently across all provisioning-related directories.*
+*Group ownership set consistently across all provisioning-related directories.*  
 ![Group ownership: scripts, data, secrets](docs/screenshots/10-chgrp-scripts-data-secrets.png)
 
-*Final permissions: read/execute-only where no write is needed at runtime, read/write where the script or manual maintenance genuinely requires it — `secrets/` locked down further still.*
-
+*Final permissions: read/execute-only where no write is needed at runtime, read/write where the script or manual maintenance genuinely requires it — `secrets/` locked down further still.*  
 ![Directory permissions](docs/screenshots/11-permissions-scripts-data-secrets.png)
 
 A system-wide `umask` of `027` replaces RHEL's default `022`, so new files are private by default (no access for anyone outside the owner and their group) rather than world-readable unless someone remembers to lock them down after the fact.
 
-*Default file creation permissions tightened system-wide.*
-
+*Default file creation permissions tightened system-wide.*  
 ![umask set to 027](docs/screenshots/12-umask-027.png)
 
 ### 4. Storage — LVM
