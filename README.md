@@ -96,9 +96,34 @@ A system-wide `umask` of `027` replaces RHEL's default `022`, so new files are p
 
 ### 4. Storage — LVM
 
-*In progress — physical volume, volume group, and logical volume creation for web content storage, chosen over static partitioning specifically to build hands-on LVM experience ahead of RHCSA.*
+Web content storage is built on LVM rather than a static partition — chosen deliberately (and learned independently, ahead of where the accompanying course covers it) so the underlying storage can grow live as content needs increase, without downtime or reformatting.
+
+A dedicated disk was allocated as a physical volume, pooled into a volume group, and a logical volume carved out at roughly half the group's total capacity — leaving the remainder available to extend into later. The volume is formatted XFS and mounted at `/var/www/html`, Apache's default document root, so all future web content lives on its own independently-resizable volume rather than sharing space with the OS.
+
+*Physical volume created from a dedicated virtual disk.*  
+![pvcreate output](docs/screenshots/13-pvdisplay.png)
+
+*Volume group pooling the physical volume into usable space.*  
+![vgcreate / vgdisplay output](docs/screenshots/14-vgdisplay.png)
+
+*Logical volume carved out of the volume group, sized to leave room for a future live extend.*  
+![lvcreate / lvdisplay output](docs/screenshots/15-lvdisplay.png)
+
+*Volume formatted XFS and mounted at Apache's default document root.*  
+![mount confirmation](docs/screenshots/16-mount.png)
+![df -h confirmation](docs/screenshots/17-df.png)
+
+Mounting at `/var/www/html` surfaced a permissions gap introduced by the stricter system-wide `umask 027`: the intermediate `/var/www` directory, created via `mkdir -p`, inherited the tighter default and blocked traversal for any non-root user. Resolved by aligning ownership with the access-control model already in place — `/var/www` and `/var/www/html` group-owned by `webteam`, giving the team that manages web content full access while keeping the directory closed to everyone else.
+
+*Ownership and permissions corrected on `/var/www` and `/var/www/html`.*  
+![webteam ownership and permissions](docs/screenshots/18-var-www-permissions.png)
+![webteam ownership and permissions](docs/screenshots/19-var-www-html-permissions.png)
+
+The mount was made persistent via `/etc/fstab`, referenced by UUID rather than device path for stability, and verified across an actual reboot rather than assumed to work.
+
+*Persistent mount confirmed via `/etc/fstab` and surviving a reboot.*  
+![fstab entry and post-reboot confirmation](docs/screenshots/20-fstab-persistent.png)
 
 ### 5. Web Service, Networking & Hardening *(planned)*
 
 Static IP and hostname configuration, systemd-managed web service, SSH hardening to key-based authentication only, task scheduling for monitoring, firewalld rules limited to essential ports, and SELinux enforcing mode with correct file contexts.
-
