@@ -24,7 +24,7 @@ The goal is a reproducible starting point — the kind of baseline a junior admi
 - Role-based sudo access via `/etc/sudoers.d/` drop-in files
 - File/directory permission design, `umask` policy
 - LVM storage management (physical volumes, volume groups, logical volumes)
-- Static networking and hostname configuration
+- Static networking, hostname configuration, and local name resolution
 - systemd service management
 - SSH hardening (key-based authentication only)
 - Package management (`dnf`)
@@ -124,6 +124,30 @@ The mount was made persistent via `/etc/fstab`, referenced by UUID rather than d
 *Persistent mount confirmed via `/etc/fstab` and surviving a reboot.*  
 ![fstab entry and post-reboot confirmation](docs/screenshots/20-fstab-persistent.png)
 
-### 5. Web Service, Networking & Hardening *(planned)*
+### 5. Static Networking & Name Resolution
 
-Static IP and hostname configuration, systemd-managed web service, SSH hardening to key-based authentication only, task scheduling for monitoring, firewalld rules limited to essential ports, and SELinux enforcing mode with correct file contexts.
+Both VMs initially took their private-network addresses from VirtualBox's DHCP server, which works for a lab but not for a server whose address other systems depend on. Both were converted to fixed addresses on the private Host-Only network, chosen outside the DHCP pool (`192.168.56.101`–`.254`) so a lease can never collide with them: `192.168.56.10` for the web server and `192.168.56.11` for the client.
+
+No gateway or DNS was set on that interface by design. It carries only VM-to-VM traffic, and the NAT adapter already provides the default route and internet access; a second gateway could create a competing default route.
+
+Each VM also has a static hostname (`web01`, `client01`) and `/etc/hosts` entries for the other, so the machines reach each other by name instead of by IP. This keeps SSH commands, scripts, and any future inventory readable and stable.
+
+*Static address on the web server's private-network interface.*  
+![Static IP on web01](docs/screenshots/21-ip-a-web01.png)
+
+*Static address on the client's private-network interface.*  
+![Static IP on client01](docs/screenshots/22-ip-a-client01.png)
+
+*The connection profile is set to manual addressing rather than DHCP, so the address is configured, not leased.*  
+![nmcli ipv4.method manual](docs/screenshots/23-nmcli-method-manual.png)
+
+*Each VM maps the other's name to its static address in `/etc/hosts`.*  
+![hosts file entries](docs/screenshots/24-etc-hosts.png)
+
+*Name resolution working in both directions: web01 to client01, and client01 to web01.*  
+![ping client01 from web01](docs/screenshots/25-ping-web-to-client.png)
+![ping web01 from client01](docs/screenshots/26-ping-client-to-web.png)
+
+### 6. Web Service & Hardening *(planned)*
+
+systemd-managed web service, SSH hardening to key-based authentication only, task scheduling for monitoring, firewalld rules limited to essential ports, and SELinux enforcing mode with correct file contexts.
